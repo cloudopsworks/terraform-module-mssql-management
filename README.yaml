@@ -1,37 +1,115 @@
-name: Terraform Transit Gateway Module
+name: terraform-module-mssql-management
 #logo: logo/logo.jpg
 badges:
   - name: Latest Release
-    image: https://img.shields.io/github/release/<owner/repo>.svg?style=for-the-badge
-    url: https://github.com/<owner/repo>/releases/latest
+    image: https://img.shields.io/github/release/cloudopsworks/terraform-module-mssql-management.svg?style=for-the-badge
+    url: https://github.com/cloudopsworks/terraform-module-mssql-management/releases/latest
   - name: Last Updated
-    image: https://img.shields.io/github/last-commit/<owner/repo>.svg?style=for-the-badge
-    url: https://github.com/<owner/repo>/commits
+    image: https://img.shields.io/github/last-commit/cloudopsworks/terraform-module-mssql-management.svg?style=for-the-badge
+    url: https://github.com/cloudopsworks/terraform-module-mssql-management/commits
 
 license: "APACHE2"
 
 copyrights:
   - name: "Cloud Ops Works LLC"
     url: "https://cloudopsworks.co"
-    year: "2026"
+    year: "2021"
 
-github_repo: <owner/repo>
+github_repo: cloudopsworks/terraform-module-mssql-management
 
 description: |-
-  <description>
+  Cloud-agnostic SQL Server management base module. Manages SQL Server logins, database users,
+  and password rotation using the betr-io/mssql provider. Designed to be called from
+  cloud-specific management modules via `module "db" { providers = { mssql = mssql } }`.
+  No cloud provider resources are included; databases must already exist on the target server.
 
 # Introduction to the project
 introduction: |-
-#  This is an introduction.
+  This module provides a reusable, cloud-agnostic foundation for managing SQL Server logins
+  and database users. It handles two categories of users:
+
+  - **Owner users** (`create_login = true`, the default): full SQL Server logins are created
+    with auto-generated, rotation-aware passwords and assigned to one or more databases with
+    configurable roles (default `db_owner`).
+  - **Regular users** (`create_login = false`): same lifecycle but with `db_datareader` as the
+    default role and managed independently from owner resources.
+
+  Password rotation is driven by `time_rotating` and `random_password` keepers, supporting
+  both periodic rotation (`password_rotation_period`) and on-demand reset (`force_reset`).
+
+  The module is intended to be composed into cloud-specific modules that supply the mssql
+  provider connection and handle secret storage (e.g., AWS Secrets Manager, GCP Secret Manager).
 
 # How to use this project
 usage: |-
+  ```hcl
+  # terragrunt.hcl (cloud-specific wrapper)
+  terraform {
+    source = "git::https://github.com/cloudopsworks/terraform-module-mssql-management.git?ref=v1.0.0"
+  }
+
+  inputs = {
+    org = {
+      organization_name = "acme"
+      organization_unit = "platform"
+      environment_type  = "production"
+      environment_name  = "prod"
+    }
+
+    # SQL Server connection — host is the FQDN of the server, port defaults to 1433
+    server_host = "myserver.database.windows.net"
+    server_port = 1433
+
+    # Map of database references (must already exist on the server)
+    databases = {
+      app_db = {
+        name = "AppDatabase"
+      }
+    }
+
+    # Map of SQL Server logins and database users
+    users = {
+      app_owner = {
+        name         = "app_owner"          # SQL Server login name
+        databases    = ["AppDatabase"]      # databases to create user in
+        roles        = ["db_owner"]         # optional, default for create_login=true
+        create_login = true                 # optional, default true
+      }
+      app_reader = {
+        name         = "app_reader"
+        databases    = ["AppDatabase"]
+        roles        = ["db_datareader"]
+        create_login = false                # no SQL Server login; user-only path
+      }
+    }
+
+    # Optional password lifecycle settings
+    password_rotation_period = 90   # rotate every 90 days; 0 = disabled
+    force_reset              = false
+  }
+  ```
 
 # Example usage
 examples: |-
+  See `usage` above for a complete Terragrunt example.
+
+  To force an immediate password reset without waiting for the rotation period:
+  ```hcl
+  inputs = {
+    force_reset = true
+  }
+  ```
+  After the rotation completes, set `force_reset = false` to prevent further resets.
 
 # How to get started quickly
 quickstart: |-
+  1. Reference this module from your cloud-specific Terragrunt stack, supplying the `mssql`
+     provider via `generate "provider"` or a parent `providers` block.
+  2. Populate `databases` with references to pre-existing SQL Server databases.
+  3. Define `users` with the desired logins, target databases, and roles.
+  4. Run `terragrunt apply`.
+  5. Consume the `owner_passwords`, `owner_usernames`, `user_passwords`, and `user_usernames`
+     outputs in your cloud module to store credentials in your secret manager of choice.
 
 include:
   - "docs/targets.md"

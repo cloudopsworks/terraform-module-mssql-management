@@ -1,1 +1,38 @@
 # Module configuration
+
+# server_host: (Required) SQL Server hostname or IP address.
+#   Supplied by the cloud-specific wrapper module (e.g., the FQDN of an Azure SQL / AWS RDS / GCP Cloud SQL instance).
+server_host: ""
+
+# server_port: (Optional) SQL Server TCP port. Default: 1433.
+server_port: 1433
+
+# databases: (Optional) Map of database references managed by this module.
+#   Databases must already exist on the SQL Server instance.
+#   Default: {}
+# databases:
+#   <db_ref>:                    # (Required) Arbitrary key used to reference this DB elsewhere
+#     name: "dbname"             # (Required) Actual SQL Server database name
+databases: {}
+
+# users: (Optional) Map of SQL Server logins and database users.
+#   Default: {}
+# users:
+#   <user_ref>:                  # (Required) Arbitrary key used to identify this user entry
+#     name: "loginname"          # (Required) SQL Server login name
+#     databases:                 # (Required) List of database names to create the user in
+#       - "dbname"
+#     roles:                     # (Optional) Database roles to assign.
+#       - "db_owner"             #   Default: ["db_owner"] when create_login=true,
+#                                #            ["db_datareader"] when create_login=false
+#     create_login: true         # (Optional) Whether to create a SQL Server login.
+#                                #   Default: true. Set false for user-only (no login) path.
+users: {}
+
+# password_rotation_period: (Optional) Number of days between automatic password rotations.
+#   Set to 0 to disable rotation. Default: 0.
+password_rotation_period: 0
+
+# force_reset: (Optional) Force immediate password replacement on next apply.
+#   After rotation completes, set back to false. Default: false.
+force_reset: false
