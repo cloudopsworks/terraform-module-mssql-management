@@ -11,9 +11,9 @@
 
 | Name | Version |
 |------|---------|
-| <a name="provider_mssql"></a> [mssql](#provider\_mssql) | ~> 0.3 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.4 |
-| <a name="provider_time"></a> [time](#provider\_time) | ~> 0.13 |
+| <a name="provider_mssql"></a> [mssql](#provider\_mssql) | 0.3.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.8.1 |
+| <a name="provider_time"></a> [time](#provider\_time) | 0.13.1 |
 
 ## Modules
 
