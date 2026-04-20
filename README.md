@@ -71,7 +71,7 @@ Instead pin to the release tag (e.g. `?ref=vX.Y.Z`) of one of our [latest releas
 ```hcl
 # terragrunt.hcl (cloud-specific wrapper)
 terraform {
-  source = "git::https://github.com/cloudopsworks/terraform-module-mssql-management.git?ref=v1.0.0"
+  source = "git::https://github.com/cloudopsworks/terraform-module-mssql-management.git?ref=v1.0.1"
 }
 
 inputs = {
@@ -165,9 +165,9 @@ Available targets:
 
 | Name | Version |
 |------|---------|
-| <a name="provider_mssql"></a> [mssql](#provider\_mssql) | ~> 0.3 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.4 |
-| <a name="provider_time"></a> [time](#provider\_time) | ~> 0.13 |
+| <a name="provider_mssql"></a> [mssql](#provider\_mssql) | 0.3.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.8.1 |
+| <a name="provider_time"></a> [time](#provider\_time) | 0.13.1 |
 
 ## Modules
 

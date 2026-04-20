@@ -45,7 +45,7 @@ usage: |-
   ```hcl
   # terragrunt.hcl (cloud-specific wrapper)
   terraform {
-    source = "git::https://github.com/cloudopsworks/terraform-module-mssql-management.git?ref=v1.0.0"
+    source = "git::https://github.com/cloudopsworks/terraform-module-mssql-management.git?ref=v1.0.1"
   }
 
   inputs = {
